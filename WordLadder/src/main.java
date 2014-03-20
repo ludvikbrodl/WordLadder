@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 public class main {
@@ -38,6 +39,8 @@ public class main {
 				}
 			}
 		}
+	
+		
 
 		//		ArrayList<LinkedList<Word>> ord = new ArrayList<LinkedList<Word>>();
 //		
@@ -47,6 +50,33 @@ public class main {
 //		
 //		System.out.println(ord.toString());
 		System.out.println(map.toString());
+		
+		Queue<Word> queue = new LinkedList();
+		queue.add(words.get(2));
+		System.out.println(words.get(2));
+		while (!queue.isEmpty()) {
+			Word word = queue.remove();
+			Word child = null;
+			while ((child=map.get(word).pop()) != null) {
+				System.out.println(child);
+				queue.add(child);
+			}
+		}
+	}
+	
+	public static class Node {
+		private LinkedList<Word> subNodes;
+		
+		public Node(LinkedList<Word> subNodes) {
+			this.subNodes = subNodes;
+		}
+		
+		public Word nextNode() {
+			if (!subNodes.isEmpty()){
+				return subNodes.pop();
+			}
+			return null;
+		}
 	}
 
 	public static class Word {
