@@ -8,46 +8,52 @@ public class main {
 	public static void main(String[] arg) {
 		System.out.println("smb");
 		ArrayList<Word> words = new ArrayList<Word>();
-		words.add(new Word("there",0));
-		words.add(new Word("which",1));
-		words.add(new Word("their",2));
-		words.add(new Word("about",3));
-		words.add(new Word("these",4));
-		words.add(new Word("words",5));
-		words.add(new Word("would",6));
-		words.add(new Word("other",7));
-		words.add(new Word("write",8));
-		words.add(new Word("could",9));
+		words.add(new Word("there"));
+		words.add(new Word("which"));
+		words.add(new Word("their"));
+		words.add(new Word("about"));
+		words.add(new Word("these"));
+		words.add(new Word("words"));
+		words.add(new Word("would"));
+		words.add(new Word("other"));
+		words.add(new Word("write"));
+		words.add(new Word("could"));
 		Word tempWord = null;
-		HashMap<String, LinkedList<Word>> map = new HashMap<String, LinkedList<Word>>();
+		HashMap<Word, LinkedList<Word>> map = new HashMap<Word, LinkedList<Word>>();
 
 		// bygg hashmappen med de reducerade nycklarna.
 		for (int i = 0; i < words.size(); i++) {
 			tempWord = words.get(i);
-			map.put(tempWord.getKey(), new LinkedList<Word>());
+			map.put(tempWord, new LinkedList<Word>());
 		}
-		
+	
 		//lägg till alla 4:a bokstäver långa ord till bucketsen.
-		Set<String> keySet = map.keySet();
-		for (String key : keySet) {
+		Set<Word> keySet = map.keySet();
+		System.out.println(keySet.size());
+		for (Word key : keySet) {
 			for (int i = 0; i < words.size(); i++) {
 				Word word = words.get(i);
-				if (word.checkMatch(key)) {
+				if (word.checkMatch(key.getKey()) && !word.toString().equals(key.toString())) {
 					map.get(key).add(word);
 				}
 			}
 		}
-		
+
+		//		ArrayList<LinkedList<Word>> ord = new ArrayList<LinkedList<Word>>();
+//		
+//		for (Word w : words) {
+//			ord.add(map.get(w.getKey()));
+//		}
+//		
+//		System.out.println(ord.toString());
 		System.out.println(map.toString());
 	}
 
 	public static class Word {
 		private String string, sortedString;
-		private int id;
 
-		public Word(String string, int id) {
+		public Word(String string) {
 			this.string = string;
-			this.id = id;
 
 			sortedString = string.substring(1);
 			char[] unsortedChars = sortedString.toCharArray();
@@ -56,9 +62,7 @@ public class main {
 			sortedString = new String(unsortedChars);
 		}
 
-		public int getID() {
-			return id;
-		}
+	
 
 		/**
 		 * check if otherString is contained inside this Word.
@@ -75,9 +79,12 @@ public class main {
 				}
 				tempString = tempString.substring(0, indexOfChar) + tempString.substring(1+indexOfChar);
 			}
+			
 			return true;
 		}
-
+		public int hashCode(){
+			return sortedString.hashCode();
+		}
 		public String getKey() {
 			return sortedString;
 		}
