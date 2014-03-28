@@ -20,36 +20,45 @@ public class main {
 
 	public static void main(String[] arg) throws IOException {
 		parse(arg);
-		
-//		Node tempWord = null;
-		
-		// bygg hashmappen med de reducerade nycklarna.
+		System.out.println(words);
+		System.out.println(combinations);
+		// build the graph. WORKS 10:42 28/3
+		buildGraph();
+		System.out.println(graph);
+	}
+	
+	/**
+	 * builds our graph from the words ArrayList(dictionary)
+	 */
+	private static void buildGraph() {
 		for (int i = 0; i < words.size(); i++) {
-			String key = words.get(i);
+			String word = words.get(i);
+			LinkedList<String> linkedList = new LinkedList<String>();
+			graph.put(word, linkedList);
 			for (int j = 0; j < words.size(); j++) {
-				String reducedKey = words.get(j);
-				if (i != j && checkMatch(key, reducedKey)) {
-					LinkedList<String> linkedList = graph.get(key);
-					if (linkedList == null) {
-						graph.put(key, new LinkedList<String>());
-					} else {
-						linkedList.add(key);
-					}
+				String nextWord = words.get(j);
+				if (i != j && checkMatch(word, nextWord)) {
+					linkedList.add(nextWord);					
 				}
 			}
 		}
-		System.out.println(graph);
 	}
-	 //får inte detta skitet att funka
-	public static boolean checkMatch(String word, String reducedKey) {
+	/**
+	 * check if word should have a link to nextWord. 
+	 * (4 last letters in word has to be contained in nextWord)
+	 * @param nextWord a link to this string?
+	 * @param word a link from this string?
+	 * @return 
+	 */
+	public static boolean checkMatch(String word, String nextWord) {
+		word = word.substring(1);
 		for (int i = 0; i < word.length(); i++) {
-			int indexOfChar = reducedKey.indexOf(word.charAt(i));
+			int indexOfChar = nextWord.indexOf(word.charAt(i));
 			if (indexOfChar == -1) {
 				return false;
 			}
-			reducedKey = reducedKey.substring(0, indexOfChar)
-					+ reducedKey.substring(1 + indexOfChar);
-			System.out.println(reducedKey);
+			nextWord = nextWord.substring(0, indexOfChar)
+					+ nextWord.substring(1 + indexOfChar);
 		}
 		return true;
 	}
@@ -189,17 +198,21 @@ public class main {
 //
 //	}
 
+	/**
+	 * parses 2 files to our words and combinations arrays
+	 * @param args file1 = dictionary, file2 = matches to check depth of.
+	 * @throws IOException
+	 */
 	private static void parse(String[] args) throws IOException {
-
+		// first file
 		FileReader fr = new FileReader(new File(args[0]));
 		BufferedReader br = new BufferedReader(fr);
 		while (br.ready()) {
 			String line = br.readLine();
-
 			words.add(line);
-
 		}
 		br.close();
+		// second file
 		fr = new FileReader(new File(args[1]));
 		br = new BufferedReader(fr);
 		while (br.ready()) {
@@ -209,7 +222,5 @@ public class main {
 			combinations.add(split[1]);
 		}
 		br.close();
-		System.out.println(words);
-		System.out.println(combinations);
 	}
 }
