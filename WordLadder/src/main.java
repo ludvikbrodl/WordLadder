@@ -3,8 +3,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Stack;
 
 public class main {
@@ -21,7 +24,8 @@ public class main {
 //		System.out.println(combinations);
 		
 		// build the graph. WORKS 10:42 28/3
-		buildGraph();
+//		buildGraph();
+		buildGraphBetter();
 		System.out.println("building the graph took in ms: " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 //		System.out.println(graph);
@@ -74,7 +78,7 @@ public class main {
 		return -1;
 	}
 	
-	private static int dfs(HashMap<String, LinkedList<String>> graph, String wordFrom,
+	private static void dfs(HashMap<String, LinkedList<String>> graph, String wordFrom,
 			String wordTo) {
 		HashMap<String, Boolean> visitedGraph = new HashMap<String, Boolean>();
 		for (String word : words) {
@@ -83,13 +87,11 @@ public class main {
 		Stack<String> queue = new Stack<String>();
 		queue.add(wordFrom);
 		visitedGraph.put(wordFrom, true);
-		int depth = 0;
-		int childrenCount = 1;
 		
 		while (!queue.isEmpty()) {
 			String nextWord = queue.pop();
 			if (nextWord.equals(wordTo)) {
-				return depth;
+				return;
 			}
 			LinkedList<String> children = graph.get(nextWord);
 //			System.out.println(children);
@@ -99,12 +101,9 @@ public class main {
 					queue.add(child);
 				}
 			}
-			if (--childrenCount == 0) {
-				depth++;
-				childrenCount = queue.size();
-			}
+			
 		}
-		return -1;
+		return;
 	}
 
 	/**
@@ -124,6 +123,44 @@ public class main {
 		}
 	}
 
+	private static void buildGraphBetter() {
+		Map <String, LinkedList<String>> map = new LinkedHashMap<String, LinkedList<String>>();
+		//skapa alla buckets
+		for (int i = 0; i < words.size(); i++) {
+			String word = words.get(i);
+			LinkedList<String> linkedList = map.get(word);
+			for (int j = 0; j < word.length(); j++) { 	//ta bort en bokstav i taget och sortera, 
+														//lägg sedan i som bucket om inte redan finns en bucket med sådan key.
+				String reducedWord = word; 
+				reducedWord = reducedWord.substring(0, j) + reducedWord.substring(j+1);
+				reducedWord = sortString(reducedWord);
+				if (linkedList == null) {
+					linkedList = new LinkedList<String>();
+				}
+				map.put(reducedWord,linkedList);
+			}
+		}
+		System.out.println(map);
+		//fyll bucketsen
+		for (int i = 0; i < words.size(); i++) {
+			String word = words.get(i);
+			String reducedWord = word.substring(1);
+			reducedWord = sortString(reducedWord);
+			LinkedList<String> linkedList = map.get(reducedWord);
+			if (!linkedList.contains(word)) {
+				linkedList.add(word);
+			}
+		}
+		System.out.println(map);
+	
+	}
+
+	private static String sortString(String reducedWord) {
+		char[] unsortedChars = reducedWord.toCharArray();
+		Arrays.sort(unsortedChars);
+		reducedWord = new String(unsortedChars);
+		return reducedWord;
+	}
 	/**
 	 * check if word should have a link to nextWord. (4 last letters in word has
 	 * to be contained in nextWord)
