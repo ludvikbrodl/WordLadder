@@ -30,7 +30,7 @@ public class main {
 		time = System.currentTimeMillis();
 //		System.out.println(graph);
 		
-		//bfs on all combinations
+//		bfs on all combinations
 		for (int i = 0; i < combinations.size(); i = i + 2) {
 			int depth = bfs(graph, combinations.get(i), combinations.get(i + 1));
 			System.out.println(depth);
@@ -41,8 +41,6 @@ public class main {
 			dfs(graph, combinations.get(i), combinations.get(i + 1));
 		}
 		System.out.println("dfs took ms to find: " + (System.currentTimeMillis() - time));
-		
-		
 	}
 
 	private static int bfs(HashMap<String, LinkedList<String>> graph, String wordFrom,
@@ -107,7 +105,7 @@ public class main {
 	}
 
 	/**
-	 * builds our graph from the words ArrayList(dictionary)
+	 * builds our graph from the words ArrayList(dictionary) O(n^2)
 	 */
 	private static void buildGraph() {
 		for (int i = 0; i < words.size(); i++) {
@@ -123,36 +121,43 @@ public class main {
 		}
 	}
 
+	/**
+	 * builds the graph with buckets, O(n+m)
+	 */
 	private static void buildGraphBetter() {
 		Map <String, LinkedList<String>> map = new LinkedHashMap<String, LinkedList<String>>();
 		//skapa alla buckets
 		for (int i = 0; i < words.size(); i++) {
 			String word = words.get(i);
-			LinkedList<String> linkedList = map.get(word);
 			for (int j = 0; j < word.length(); j++) { 	//ta bort en bokstav i taget och sortera, 
 														//lägg sedan i som bucket om inte redan finns en bucket med sådan key.
 				String reducedWord = word; 
 				reducedWord = reducedWord.substring(0, j) + reducedWord.substring(j+1);
 				reducedWord = sortString(reducedWord);
+				LinkedList<String> linkedList = map.get(reducedWord);
 				if (linkedList == null) {
 					linkedList = new LinkedList<String>();
+				}
+				if (!linkedList.contains(word)) {
+					linkedList.add(word);
 				}
 				map.put(reducedWord,linkedList);
 			}
 		}
-		System.out.println(map);
-		//fyll bucketsen
+		//create graph with dictionary and buckets.
 		for (int i = 0; i < words.size(); i++) {
 			String word = words.get(i);
 			String reducedWord = word.substring(1);
 			reducedWord = sortString(reducedWord);
 			LinkedList<String> linkedList = map.get(reducedWord);
-			if (!linkedList.contains(word)) {
-				linkedList.add(word);
+			LinkedList<String> graphList = new LinkedList<String>();
+			for (String newWord : linkedList) {
+				if (!newWord.equals(word)) {
+					graphList.add(newWord);
+				}
 			}
+			graph.put(word, graphList);
 		}
-		System.out.println(map);
-	
 	}
 
 	private static String sortString(String reducedWord) {
