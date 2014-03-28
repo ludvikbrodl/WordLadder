@@ -30,6 +30,7 @@ public class main {
 		//bfs on all combinations
 		for (int i = 0; i < combinations.size(); i = i + 2) {
 			int depth = bfs(graph, combinations.get(i), combinations.get(i + 1));
+			System.out.println(depth);
 		}
 	}
 
@@ -39,12 +40,31 @@ public class main {
 		for (String word : words) {
 			visitedGraph.put(word, false);
 		}
-		Queue queue = new LinkedList<String>();
+		LinkedList<String> queue = new LinkedList<String>();
 		queue.add(wordFrom);
+		visitedGraph.put(wordFrom, true);
+		int depth = 0;
+		int childrenCount = 1;
 		while (!queue.isEmpty()) {
-			//GOGOGO
+			String nextWord = queue.poll();
+			if (nextWord.equals(wordTo)) {
+				return depth;
+			}
+			LinkedList<String> children = graph.get(nextWord);
+			childrenCount += children.size();
+			childrenCount--;
+//			System.out.println(childrenCount);
+			if (childrenCount == 0) {
+				depth++;
+			}
+			for (String child : children) {
+				if (visitedGraph.get(child) == false) {
+					visitedGraph.put(child, true);
+					queue.push(child);
+				}
+			}
 		}
-		return 0;
+		return -1;
 	}
 
 	/**
