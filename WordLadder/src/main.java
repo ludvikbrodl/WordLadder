@@ -3,16 +3,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.Set;
 import java.util.Stack;
-
-import javax.print.attribute.standard.MediaSize.Other;
 
 public class main {
 	static ArrayList<String> words = new ArrayList<String>();
@@ -31,7 +24,7 @@ public class main {
 		buildGraph();
 		System.out.println("building the graph took in ms: " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
-		System.out.println(graph);
+//		System.out.println(graph);
 		
 		//bfs on all combinations
 		for (int i = 0; i < combinations.size(); i = i + 2) {
@@ -41,7 +34,7 @@ public class main {
 		System.out.println("bfs took ms to find: " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 		for (int i = 0; i < combinations.size(); i = i + 2) {
-			int depth = dfs(graph, combinations.get(i), combinations.get(i + 1));
+			dfs(graph, combinations.get(i), combinations.get(i + 1));
 		}
 		System.out.println("dfs took ms to find: " + (System.currentTimeMillis() - time));
 		
@@ -59,27 +52,23 @@ public class main {
 		visitedGraph.put(wordFrom, true);
 		int depth = 0;
 		int childrenCount = 1;
-		int nextChildrenCount = 0;
+		
 		while (!queue.isEmpty()) {
 			String nextWord = queue.poll();
 			if (nextWord.equals(wordTo)) {
 				return depth;
 			}
 			LinkedList<String> children = graph.get(nextWord);
-			nextChildrenCount += children.size();
-//			System.out.println(children.size());
-			childrenCount--;
-//			System.out.println(childrenCount);
-			if (childrenCount == 0) {
-				depth++;
-				childrenCount = nextChildrenCount;
-				nextChildrenCount = 0;
-			}
+//			System.out.println(children);
 			for (String child : children) {
 				if (visitedGraph.get(child) == false) {
 					visitedGraph.put(child, true);
-					queue.push(child);
+					queue.add(child);
 				}
+			}
+			if (--childrenCount == 0) {
+				depth++;
+				childrenCount = queue.size();
 			}
 		}
 		return -1;
@@ -96,23 +85,23 @@ public class main {
 		visitedGraph.put(wordFrom, true);
 		int depth = 0;
 		int childrenCount = 1;
+		
 		while (!queue.isEmpty()) {
 			String nextWord = queue.pop();
 			if (nextWord.equals(wordTo)) {
 				return depth;
 			}
 			LinkedList<String> children = graph.get(nextWord);
-			childrenCount += children.size();
-			childrenCount--;
-//			System.out.println(childrenCount);
-			if (childrenCount == 0) {
-				depth++;
-			}
+//			System.out.println(children);
 			for (String child : children) {
 				if (visitedGraph.get(child) == false) {
 					visitedGraph.put(child, true);
-					queue.push(child);
+					queue.add(child);
 				}
+			}
+			if (--childrenCount == 0) {
+				depth++;
+				childrenCount = queue.size();
 			}
 		}
 		return -1;
