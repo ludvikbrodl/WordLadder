@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Stack;
 
-public class main {
+public class WordLadder {
 	static ArrayList<String> words = new ArrayList<String>();
 	static ArrayList<String> combinations = new ArrayList<String>();
 	static HashMap<String, LinkedList<String>> graph = new HashMap<String, LinkedList<String>>();
@@ -18,7 +18,7 @@ public class main {
 	public static void main(String[] arg) throws IOException {
 		long time = System.currentTimeMillis();
 		parse(arg);
-		System.out.println("parsing took in ms: " + (System.currentTimeMillis() - time));
+//		System.out.println("parsing took in ms: " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 //		System.out.println(words);
 //		System.out.println(combinations);
@@ -26,21 +26,28 @@ public class main {
 		// build the graph. WORKS 10:42 28/3
 //		buildGraph();
 		buildGraphBetter();
-		System.out.println("building the graph took in ms: " + (System.currentTimeMillis() - time));
+//		System.out.println("building the graph took in ms: " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 //		System.out.println(graph);
-		
+		// TODO Auto-generated method stub
 //		bfs on all combinations
 		for (int i = 0; i < combinations.size(); i = i + 2) {
 			int depth = bfs(graph, combinations.get(i), combinations.get(i + 1));
 			System.out.println(depth);
 		}
-		System.out.println("bfs took ms to find: " + (System.currentTimeMillis() - time));
+		clear();
+//		System.out.println("bfs took ms to find: " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
-		for (int i = 0; i < combinations.size(); i = i + 2) {
-			dfs(graph, combinations.get(i), combinations.get(i + 1));
-		}
-		System.out.println("dfs took ms to find: " + (System.currentTimeMillis() - time));
+//		for (int i = 0; i < combinations.size(); i = i + 2) {
+//			dfs(graph, combinations.get(i), combinations.get(i + 1));
+//		}
+//		System.out.println("dfs took ms to find: " + (System.currentTimeMillis() - time));
+	}
+
+	private static void clear() {
+		words.clear();
+		combinations.clear();
+		graph.clear();		
 	}
 
 	private static int bfs(HashMap<String, LinkedList<String>> graph, String wordFrom,
@@ -130,7 +137,7 @@ public class main {
 		for (int i = 0; i < words.size(); i++) {
 			String word = words.get(i);
 			for (int j = 0; j < word.length(); j++) { 	//ta bort en bokstav i taget och sortera, 
-														//lägg sedan i som bucket om inte redan finns en bucket med sådan key.
+														//lï¿½gg sedan i som bucket om inte redan finns en bucket med sï¿½dan key.
 				String reducedWord = word; 
 				reducedWord = reducedWord.substring(0, j) + reducedWord.substring(j+1);
 				reducedWord = sortString(reducedWord);
